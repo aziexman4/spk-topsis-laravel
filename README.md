@@ -81,5 +81,13 @@ php artisan serve
 Aplikasi sekarang sudah berjalan! Silakan buka browser dan akses alamat:
 👉 **http://localhost:8000**
 
+**Akun Default untuk Login (Hasil dari Seeder):**
+- **Admin (HRD):**
+  - Email: `hrd@example.com`
+  - Password: `password`
+- **Pelamar:**
+  - Email: `pelamar@example.com`
+  - Password: `password`
+
 ---
 *Dibuat dengan ❤️ menggunakan Laravel.*
