@@ -15,9 +15,9 @@ class TopsisController extends Controller
         $kriterias = Kriteria::orderBy('id')->get();
         $periodes = Periode::orderBy('created_at', 'desc')->get();
         
+        $periodeAktif = Periode::where('is_active', true)->first();
         $periode_id = $request ? $request->periode_id : null;
         if (!$periode_id) {
-            $periodeAktif = Periode::where('is_active', true)->first();
             $periode_id = $periodeAktif?->id;
         }
 
@@ -27,8 +27,22 @@ class TopsisController extends Controller
             ->where('status', 'lolos_administrasi')
             ->get();
 
+        $matriks = [];
+        $normalisasi = [];
+        $terbobot = [];
+        $idealPositif = [];
+        $idealNegatif = [];
+        $jarakPositif = [];
+        $jarakNegatif = [];
+        $hasilAkhir = [];
+        $customBobot = $request ? $request->input('bobot') : null;
+
         if ($kriterias->isEmpty() || $alternatifs->isEmpty()) {
-            return null;
+            return compact(
+                'periodeAktif', 'kriterias', 'alternatifs', 'matriks', 'normalisasi', 
+                'terbobot', 'idealPositif', 'idealNegatif', 
+                'jarakPositif', 'jarakNegatif', 'hasilAkhir', 'customBobot', 'periodes', 'periode_id'
+            );
         }
 
         $totalBobot = 0;
@@ -153,10 +167,6 @@ class TopsisController extends Controller
     {
         $data = $this->hitungTopsis($request);
         
-        if ($data === null) {
-            return redirect()->route('dashboard')->with('error', 'Data kriteria atau kandidat lolos administrasi belum lengkap!');
-        }
-
         return view('topsis.hasil', $data);
     }
 
@@ -164,8 +174,8 @@ class TopsisController extends Controller
     {
         $data = $this->hitungTopsis($request);
         
-        if ($data === null) {
-            return redirect()->route('topsis.hasil')->with('error', 'Data tidak tersedia.');
+        if (empty($data['hasilAkhir'])) {
+            return redirect()->route('topsis.hasil')->with('error', 'Data tidak tersedia untuk dicetak.');
         }
 
         $pdf = Pdf::loadView('topsis.laporan_pdf', $data);
