@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:hrd')->group(function () {
         Route::resource('kriteria', KriteriaController::class);
         Route::resource('alternatif', AlternatifController::class);
+        Route::patch('/alternatif/{id}/status', [AlternatifController::class, 'updateStatus'])->name('alternatif.updateStatus');
         
         Route::get('penilaian', [PenilaianController::class, 'index'])->name('penilaian.index');
         Route::get('penilaian/{alternatif}/edit', [PenilaianController::class, 'edit'])->name('penilaian.edit');

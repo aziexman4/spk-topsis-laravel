@@ -4,23 +4,42 @@ namespace App\Http\Controllers;
 
 use App\Models\Alternatif;
 use App\Models\Kriteria;
+use App\Models\Periode;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class TopsisController extends Controller
 {
-    public function hitungTopsis()
+    public function hitungTopsis(Request $request = null)
     {
         $kriterias = Kriteria::orderBy('id')->get();
-        $alternatifs = Alternatif::with('penilaians')->get();
+        $periodeAktif = Periode::where('is_active', true)->first();
+
+        // Hanya hitung alternatif pada periode aktif dan status lolos administrasi
+        $alternatifs = Alternatif::with('penilaians')
+            ->where('periode_id', $periodeAktif?->id)
+            ->where('status', 'lolos_administrasi')
+            ->get();
 
         if ($kriterias->isEmpty() || $alternatifs->isEmpty()) {
             return null;
         }
 
-        $totalBobot = $kriterias->sum('bobot');
-        if ($totalBobot != 100) {
-            return ['error' => 'Total bobot kriteria (' . $totalBobot . ') tidak sama dengan 100. Harap sesuaikan bobot di menu Kriteria.'];
+        $totalBobot = 0;
+        
+        // Override bobot if what-if simulation is active
+        $customBobot = $request ? $request->input('bobot') : null;
+        
+        foreach ($kriterias as $k) {
+            if ($customBobot && isset($customBobot[$k->id])) {
+                $k->bobot = floatval($customBobot[$k->id]);
+            }
+            $totalBobot += $k->bobot;
+        }
+        
+        // Normalisasi Bobot Relatif (Bypass limit 100%)
+        foreach ($kriterias as $k) {
+            $k->bobot_relatif = ($totalBobot > 0) ? ($k->bobot / $totalBobot) : 0;
         }
 
         $matriks = [];
@@ -54,7 +73,8 @@ class TopsisController extends Controller
                 $rij = $pembagi[$kriteria->id] > 0 ? ($nilai_asli / $pembagi[$kriteria->id]) : 0;
                 $normalisasi[$alternatif->id][$kriteria->id] = $rij;
                 
-                $vij = $rij * $kriteria->bobot;
+                // Gunakan bobot relatif, bukan bobot mentah
+                $vij = $rij * $kriteria->bobot_relatif;
                 $terbobot[$alternatif->id][$kriteria->id] = $vij;
             }
         }
@@ -99,12 +119,16 @@ class TopsisController extends Controller
             
             $vi = ($d_plus + $d_min) > 0 ? ($d_min / ($d_plus + $d_min)) : 0;
 
+            // Passing Grade Threshold: 0.600
+            $is_recommended = $vi >= 0.600;
+
             $hasilAkhir[] = [
                 'alternatif' => $alternatif,
                 'nama' => $alternatif->nama_pelamar,
                 'nilai' => $vi,
                 'd_plus' => $d_plus,
                 'd_min' => $d_min,
+                'is_recommended' => $is_recommended
             ];
         }
 
@@ -113,22 +137,18 @@ class TopsisController extends Controller
         });
 
         return compact(
-            'kriterias', 'alternatifs', 'matriks', 'normalisasi', 
+            'periodeAktif', 'kriterias', 'alternatifs', 'matriks', 'normalisasi', 
             'terbobot', 'idealPositif', 'idealNegatif', 
-            'jarakPositif', 'jarakNegatif', 'hasilAkhir'
+            'jarakPositif', 'jarakNegatif', 'hasilAkhir', 'customBobot'
         );
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $data = $this->hitungTopsis();
+        $data = $this->hitungTopsis($request);
         
         if ($data === null) {
-            return redirect()->route('dashboard')->with('error', 'Data kriteria atau alternatif belum lengkap!');
-        }
-
-        if (isset($data['error'])) {
-            return redirect()->route('kriteria.index')->with('error', $data['error']);
+            return redirect()->route('dashboard')->with('error', 'Data kriteria atau kandidat lolos administrasi belum lengkap!');
         }
 
         return view('topsis.hasil', $data);
@@ -142,11 +162,7 @@ class TopsisController extends Controller
             return redirect()->route('topsis.hasil')->with('error', 'Data tidak tersedia.');
         }
 
-        if (isset($data['error'])) {
-            return redirect()->route('kriteria.index')->with('error', $data['error']);
-        }
-
         $pdf = Pdf::loadView('topsis.laporan_pdf', $data);
-        return $pdf->download('Hasil_Seleksi_Karyawan_TOPSIS.pdf');
+        return $pdf->download('Laporan_Evaluasi_Karyawan.pdf');
     }
 }

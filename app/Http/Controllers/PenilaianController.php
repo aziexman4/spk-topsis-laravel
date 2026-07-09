@@ -11,7 +11,11 @@ class PenilaianController extends Controller
 {
     public function index()
     {
-        $alternatifs = Alternatif::with('penilaians')->get();
+        $periodeAktif = \App\Models\Periode::where('is_active', true)->first();
+        $alternatifs = Alternatif::with('penilaians')
+            ->where('periode_id', $periodeAktif?->id)
+            ->where('status', 'lolos_administrasi')
+            ->get();
         $kriterias = Kriteria::all();
         return view('penilaian.index', compact('alternatifs', 'kriterias'));
     }

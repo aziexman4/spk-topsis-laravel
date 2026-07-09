@@ -97,7 +97,9 @@
 
     <div class="header">
         <h1>Sistem Informasi Seleksi Penerimaan Karyawan Baru</h1>
-        <p>Laporan Hasil Perhitungan Sistem Pendukung Keputusan (SPK) Metode TOPSIS</p>
+        <p>Laporan Hasil Perhitungan Sistem Pendukung Keputusan (SPK) Metode TOPSIS<br>
+           Periode: {{ $periodeAktif ? $periodeAktif->nama_periode : 'Semua Periode' }}
+        </p>
     </div>
 
     <div class="subtitle">
@@ -126,12 +128,14 @@
                     <td><strong>{{ $hasil['nama'] }}</strong></td>
                     <td class="text-center">{{ number_format($hasil['nilai'], 4) }}</td>
                     <td>
-                        @if($index === 0)
-                            Sangat Direkomendasikan
-                        @elseif($index < 3)
-                            Direkomendasikan
+                        @if($hasil['is_recommended'])
+                            @if($index === 0)
+                                <span style="color: #059669; font-weight: bold;">Sangat Direkomendasikan (Terbaik)</span>
+                            @else
+                                <span style="color: #16a34a; font-weight: bold;">Memenuhi Syarat Kelayakan (V > 0.6)</span>
+                            @endif
                         @else
-                            Dipertimbangkan
+                            <span style="color: #dc2626; font-weight: bold;">Tidak Layak (Di Bawah Standar)</span>
                         @endif
                     </td>
                 </tr>

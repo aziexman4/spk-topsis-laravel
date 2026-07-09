@@ -44,4 +44,14 @@ class AlternatifController extends Controller
         Alternatif::findOrFail($id)->delete();
         return redirect()->route('alternatif.index')->with('success', 'Alternatif berhasil dihapus.');
     }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $alternatif = Alternatif::findOrFail($id);
+        $request->validate(['status' => 'required|in:menunggu,lolos_administrasi,gugur']);
+        $alternatif->update(['status' => $request->status]);
+        
+        $msg = $request->status == 'lolos_administrasi' ? 'diloloskan' : 'digugurkan';
+        return redirect()->route('alternatif.index')->with('success', "Kandidat berhasil $msg seleksi administrasi.");
+    }
 }

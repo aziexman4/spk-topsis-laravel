@@ -1,23 +1,23 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-xl text-slate-800 dark:text-white leading-tight">
+        <h2 class="font-bold text-xl text-zinc-800 dark:text-white leading-tight">
             Edit Kandidat: {{ $alternatif->nama_pelamar }}
         </h2>
     </x-slot>
 
     <div class="py-12 animate-fade-in-up">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-700/60 p-8 transition-colors duration-300">
+            <div class="bg-white dark:bg-zinc-800 rounded-2xl shadow-xl shadow-zinc-200/50 dark:shadow-none overflow-hidden border border-zinc-100 dark:border-zinc-700/60 p-8 transition-colors duration-300">
                 <form action="{{ route('alternatif.update', $alternatif->id) }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="mb-8">
-                        <label class="block text-slate-700 dark:text-slate-300 text-sm font-bold mb-2">Nama Pelamar / Kandidat</label>
-                        <input type="text" name="nama_pelamar" value="{{ $alternatif->nama_pelamar }}" class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:ring-blue-500 shadow-sm transition-colors" required>
+                        <label class="block text-zinc-700 dark:text-zinc-300 text-sm font-bold mb-2">Nama Pelamar / Kandidat</label>
+                        <input type="text" name="nama_pelamar" value="{{ $alternatif->nama_pelamar }}" class="w-full rounded-lg border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-100 focus:border-zinc-900 dark:border-white focus:ring-zinc-900 dark:ring-white shadow-sm transition-colors" required>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-all duration-300 hover:-translate-y-1">Perbarui Kandidat</button>
-                        <a href="{{ route('alternatif.index') }}" class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium transition-colors">Batal</a>
+                        <button type="submit" class="px-6 py-2.5 bg-zinc-900 hover:bg-black dark:bg-white dark:hover:bg-zinc-200 dark:text-zinc-900 text-white font-semibold rounded-lg shadow-md transition-all duration-300 hover:-tranzinc-y-1">Perbarui Kandidat</button>
+                        <a href="{{ route('alternatif.index') }}" class="text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 font-medium transition-colors">Batal</a>
                     </div>
                 </form>
             </div>
