@@ -7,10 +7,18 @@ use Illuminate\Http\Request;
 
 class AlternatifController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $alternatifs = Alternatif::all();
-        return view('alternatif.index', compact('alternatifs'));
+        $periodes = \App\Models\Periode::orderBy('created_at', 'desc')->get();
+        $periode_id = $request->periode_id ?? \App\Models\Periode::where('is_active', true)->value('id');
+
+        $query = Alternatif::query();
+        if ($periode_id) {
+            $query->where('periode_id', $periode_id);
+        }
+        
+        $alternatifs = $query->get();
+        return view('alternatif.index', compact('alternatifs', 'periodes', 'periode_id'));
     }
 
     public function create()

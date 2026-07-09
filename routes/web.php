@@ -49,6 +49,11 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:hrd')->group(function () {
         Route::resource('kriteria', KriteriaController::class);
+        
+        // Periode / Gelombang Perekrutan
+        Route::resource('periode', \App\Http\Controllers\PeriodeController::class)->except(['show']);
+        Route::patch('/periode/{id}/set-active', [\App\Http\Controllers\PeriodeController::class, 'setActive'])->name('periode.setActive');
+        
         Route::resource('alternatif', AlternatifController::class);
         Route::patch('/alternatif/{id}/status', [AlternatifController::class, 'updateStatus'])->name('alternatif.updateStatus');
         

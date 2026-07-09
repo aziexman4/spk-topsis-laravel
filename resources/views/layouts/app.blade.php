@@ -57,6 +57,15 @@
                             </a>
                         </li>
                         @if(Auth::check() && Auth::user()->isHrd())
+                        <!-- Data Gelombang (Periode) -->
+                        <li>
+                            <a href="{{ route('periode.index') }}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-zinc-800 text-zinc-400 hover:text-white border-l-4 {{ request()->routeIs('periode.*') ? 'border-violet-500 text-white bg-zinc-800' : 'border-transparent' }} rounded-lg transition-all duration-300 ease-in-out pr-6 group">
+                                <span class="inline-flex justify-center items-center ml-4 group-hover:scale-110 transition-transform">
+                                    <svg class="w-5 h-5 {{ request()->routeIs('periode.*') ? 'text-violet-400' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                </span>
+                                <span class="ml-3 text-sm tracking-wide font-medium">Data Gelombang</span>
+                            </a>
+                        </li>
                         <li>
                             <a href="{{ route('kriteria.index') }}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-zinc-800 text-zinc-400 hover:text-white border-l-4 {{ request()->routeIs('kriteria.*') ? 'border-zinc-900 dark:border-white text-white bg-zinc-800' : 'border-transparent' }} rounded-lg transition-all duration-300 ease-in-out pr-6 group">
                                 <span class="inline-flex justify-center items-center ml-4 group-hover:scale-110 transition-transform">

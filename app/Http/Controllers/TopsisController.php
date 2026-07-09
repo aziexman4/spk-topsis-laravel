@@ -13,11 +13,17 @@ class TopsisController extends Controller
     public function hitungTopsis(Request $request = null)
     {
         $kriterias = Kriteria::orderBy('id')->get();
-        $periodeAktif = Periode::where('is_active', true)->first();
+        $periodes = Periode::orderBy('created_at', 'desc')->get();
+        
+        $periode_id = $request ? $request->periode_id : null;
+        if (!$periode_id) {
+            $periodeAktif = Periode::where('is_active', true)->first();
+            $periode_id = $periodeAktif?->id;
+        }
 
         // Hanya hitung alternatif pada periode aktif dan status lolos administrasi
         $alternatifs = Alternatif::with('penilaians')
-            ->where('periode_id', $periodeAktif?->id)
+            ->where('periode_id', $periode_id)
             ->where('status', 'lolos_administrasi')
             ->get();
 
@@ -139,7 +145,7 @@ class TopsisController extends Controller
         return compact(
             'periodeAktif', 'kriterias', 'alternatifs', 'matriks', 'normalisasi', 
             'terbobot', 'idealPositif', 'idealNegatif', 
-            'jarakPositif', 'jarakNegatif', 'hasilAkhir', 'customBobot'
+            'jarakPositif', 'jarakNegatif', 'hasilAkhir', 'customBobot', 'periodes', 'periode_id'
         );
     }
 
@@ -154,9 +160,9 @@ class TopsisController extends Controller
         return view('topsis.hasil', $data);
     }
 
-    public function cetakPdf()
+    public function cetakPdf(Request $request)
     {
-        $data = $this->hitungTopsis();
+        $data = $this->hitungTopsis($request);
         
         if ($data === null) {
             return redirect()->route('topsis.hasil')->with('error', 'Data tidak tersedia.');

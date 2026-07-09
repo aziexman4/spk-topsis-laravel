@@ -1,8 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-2xl text-zinc-800 dark:text-white leading-tight font-sans tracking-tight">
-            {{ __('Matriks Penilaian Pelamar') }}
-        </h2>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full space-y-4 sm:space-y-0">
+            <h2 class="font-bold text-2xl text-zinc-800 dark:text-white leading-tight font-sans tracking-tight">
+                {{ __('Matriks Penilaian Pelamar') }}
+            </h2>
+            <form method="GET" action="{{ route('penilaian.index') }}" class="flex items-center space-x-3">
+                <label for="periode_id" class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Pilih Gelombang:</label>
+                <select name="periode_id" id="periode_id" onchange="this.form.submit()" class="text-sm bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-xl focus:ring-violet-500 focus:border-violet-500 block p-2 px-3 shadow-sm transition-colors">
+                    @foreach($periodes as $p)
+                        <option value="{{ $p->id }}" {{ $periode_id == $p->id ? 'selected' : '' }}>{{ $p->nama_periode }} {{ $p->is_active ? '(Aktif)' : '' }}</option>
+                    @endforeach
+                </select>
+            </form>
+        </div>
     </x-slot>
 
     <div class="py-12 animate-fade-in-up font-sans" x-data="{ editRow: null }">

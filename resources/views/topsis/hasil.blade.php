@@ -9,16 +9,26 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 space-y-4 sm:space-y-0">
         <div>
             <h2 class="text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-black dark:from-zinc-200 dark:to-white dark:from-zinc-400 dark:to-indigo-400">Hasil Seleksi</span> TOPSIS
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-fuchsia-600">Hasil Seleksi</span> TOPSIS
             </h2>
             <p class="text-zinc-500 dark:text-zinc-400 mt-1 text-sm font-medium">Laporan akhir kalkulasi Sistem Pendukung Keputusan.</p>
         </div>
-        <a href="{{ route('topsis.pdf') }}" class="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-semibold rounded-xl shadow-lg shadow-fuchsia-500/30 hover:shadow-fuchsia-600/40 transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-900 w-full sm:w-auto">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-            </svg>
-            Eksport Dokumen PDF
-        </a>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+            <form method="GET" action="{{ route('topsis.hasil') }}" class="flex items-center space-x-3 w-full sm:w-auto">
+                <label for="periode_id" class="text-sm font-medium text-zinc-600 dark:text-zinc-400 whitespace-nowrap hidden sm:block">Gelombang:</label>
+                <select name="periode_id" id="periode_id" onchange="this.form.submit()" class="w-full sm:w-auto text-sm bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-xl focus:ring-violet-500 focus:border-violet-500 block p-2.5 px-4 shadow-sm transition-colors">
+                    @foreach($periodes as $p)
+                        <option value="{{ $p->id }}" {{ $periode_id == $p->id ? 'selected' : '' }}>{{ $p->nama_periode }} {{ $p->is_active ? '(Aktif)' : '' }}</option>
+                    @endforeach
+                </select>
+            </form>
+            <a href="{{ route('topsis.pdf', ['periode_id' => $periode_id]) }}" class="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-semibold rounded-xl shadow-lg shadow-fuchsia-500/30 hover:shadow-fuchsia-600/40 transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-900 w-full sm:w-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Eksport PDF
+            </a>
+        </div>
     </div>
 
     <!-- What-If Analytics Panel -->

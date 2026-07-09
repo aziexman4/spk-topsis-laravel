@@ -9,15 +9,18 @@ use Illuminate\Http\Request;
 
 class PenilaianController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $periodeAktif = \App\Models\Periode::where('is_active', true)->first();
+        $periodes = \App\Models\Periode::orderBy('created_at', 'desc')->get();
+        $periode_id = $request->periode_id ?? \App\Models\Periode::where('is_active', true)->value('id');
+
         $alternatifs = Alternatif::with('penilaians')
-            ->where('periode_id', $periodeAktif?->id)
+            ->where('periode_id', $periode_id)
             ->where('status', 'lolos_administrasi')
             ->get();
+            
         $kriterias = Kriteria::all();
-        return view('penilaian.index', compact('alternatifs', 'kriterias'));
+        return view('penilaian.index', compact('alternatifs', 'kriterias', 'periodes', 'periode_id'));
     }
 
     public function edit($alternatif_id)
